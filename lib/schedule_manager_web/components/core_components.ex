@@ -429,10 +429,10 @@ defmodule ScheduleManagerWeb.CoreComponents do
     ~H"""
     <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
       <div>
-        <h1 class="text-lg font-semibold leading-8 text-zinc-800">
+        <h1 class="text-lg font-semibold leading-8 text-lime-400">
           <%= render_slot(@inner_block) %>
         </h1>
-        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
+        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-lime-200">
           <%= render_slot(@subtitle) %>
         </p>
       </div>
@@ -672,5 +672,34 @@ defmodule ScheduleManagerWeb.CoreComponents do
   """
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
+  end
+
+  attr :class, :string, default: nil
+
+  slot :name, required: true
+  slot :local_and_hour, required: true
+  slot :credits, required: true
+  slot :exams_dates
+  slot :exams_results
+  slot :final_average
+
+  def discipline_card(assigns) do
+    ~H"""
+    <div class="flex items-center justify-between rounded-md bg-zinc-800 w-[350px] px-2">
+      <div class="flex flex-col gap-1 justify-center items-start">
+        <h2 class="text-lime-400 font-medium">
+          <%= render_slot(@name) %>
+        </h2>
+
+        <h4 class="text-lime-200">
+          <%= render_slot(@local_and_hour) %>
+        </h4>
+      </div>
+
+      <span class="text-lime-400 font-light">
+        <%= render_slot(@credits) %>
+      </span>
+    </div>
+    """
   end
 end
