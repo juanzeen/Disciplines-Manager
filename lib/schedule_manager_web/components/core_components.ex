@@ -675,6 +675,8 @@ defmodule ScheduleManagerWeb.CoreComponents do
   end
 
   attr :class, :string, default: nil
+  attr :dates, :list
+  attr :results, :list
 
   slot :name, required: true
   slot :local_and_hour, required: true
@@ -685,48 +687,46 @@ defmodule ScheduleManagerWeb.CoreComponents do
 
   def discipline_card(assigns) do
     ~H"""
-    <div class="flex flex-col items-around justify-center rounded-md bg-zinc-800 w-[350px]">
-    <div class="w-full flex justify-between px-3">
+    <div class="flex flex-col items-around justify-center rounded-md bg-zinc-800 w-[370px] h-[220px] gap-4 p-3 cursor-pointer">
+      <div class="w-full flex justify-between">
+        <div class="flex flex-col items-start">
+          <h2 class="text-2xl text-lime-400 font-medium">
+            <%= render_slot(@name) %>
+          </h2>
 
-      <div class="flex flex-col items-start">
-        <h2 class="text-2xl text-lime-400 font-medium">
-          <%= render_slot(@name) %>
-        </h2>
+          <h4 class="text-lg text-lime-300 italic opacity-70">
+            <%= render_slot(@local_and_hour) %>
+          </h4>
+        </div>
 
-        <h4 class="text-lg text-lime-300 italic opacity-70">
-          <%= render_slot(@local_and_hour) %>
-        </h4>
+        <span class="text-xl text-lime-400 font-light">
+          <%= render_slot(@credits) %>
+        </span>
       </div>
 
-      <span class="text-xl text-lime-400 font-light">
-        <%= render_slot(@credits) %>
-      </span>
+      <div class="flex justify-around items-center">
+        <div class="flex flex-col text-lime-200">
+          <h3>Exams dates</h3>
+          <ul class="ml-2 text-lime-100">
+            <li :for={date <- @dates}>
+              <%= date %>
+            </li>
+          </ul>
+        </div>
 
-    </div>
+        <div class="flex flex-col text-lime-200">
+          <h3>Exams results</h3>
+          <ul class="ml-2 text-lime-100">
+            <li :for={result <- @results}>
+              <%= result %>
+            </li>
+          </ul>
+        </div>
 
-    <div class="flex justify-around items-end">
-
-    <div class="flex flex-col text-lime-200 ">
-    <h3>Exams dates</h3>
-    <ul>
-      <li>01/01</li>
-      <li>01/01</li>
-      <li>01/01</li>
-    </ul>
-
-    <h3>Exams results</h3>
-    <ul>
-      <li>9.2</li>
-      <li>10.0</li>
-      <li>7.2</li>
-    </ul>
-    </div>
-
-    <span class="text-7xl text-lime-400 flex items-baseline">
-    <%=render_slot(@final_average)%>
-    </span>
-    </div>
-
+        <span class="text-7xl text-lime-400 flex items-baseline">
+          <%= render_slot(@final_average) %>
+        </span>
+      </div>
     </div>
     """
   end
