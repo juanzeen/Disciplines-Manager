@@ -15,12 +15,41 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
         <:name>Estrutura de Dados II</:name>
         <:local_and_hour>105 CCT - Seg, Quar -  10:00</:local_and_hour>
         <:credits>3</:credits>
-        <:final_average>9.0</:final_average>
+        <:final_average>10</:final_average>
       </.discipline_card>
 
-      <button type="submit" class="bg-lime-400 rounded-full w-[50px] h-[50px] hover:bg-lime-500">
-        <h2 class="text-2xl text-zinc-100">+</h2>
+      <button type="submit" class="bg-lime-400 rounded-full w-[50px] h-[50px] hover:bg-lime-500"
+      phx-click={show_modal("create-discipline-modal")}>
+        <h2 class="text-3xl text-zinc-100">+</h2>
       </button>
+
+      <.modal id="create-discipline-modal" class="bg-zinc-100">
+        <form class="flex flex-col gap-4 justify-center items-center">
+
+        <h2 class="text-lime-400 text-xl">Create a discipline!</h2>
+
+        <div class="flex justify-around items-around w-full">
+        <div class="flex flex-col items-around justify-center gap-2">
+        <input type="text" placeholder="Discipline name" class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400">
+        <input type="text" placeholder="Discipline hour and day" class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400">
+        <input type="text" placeholder="Discipline credits" class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400">
+        </div>
+
+        <div class="h-[100] w-px text-lime-400 bg-lime-400">.</div>
+
+        <div class="flex flex-col items-around justify-center gap-4">
+        <input type="text" placeholder="Discipline exams dates" class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400">
+        <input type="text" placeholder="Discipline exams results" class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400">
+        </div>
+        </div>
+
+        <.button class="bg-lime-400/60 text-lime-200 hover:bg-lime-400/80 transition-opacity">
+        Create!
+        </.button>
+
+        </form>
+      </.modal>
+
     </main>
     """
   end
