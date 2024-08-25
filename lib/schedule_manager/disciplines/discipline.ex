@@ -8,12 +8,13 @@ defmodule ScheduleManager.Disciplines.Discipline do
     field :hour, :string
     field :exams_dates, {:array, :string}
     field :credits, :decimal
-    field :exams_reults, {:array, :decimal}
+    field :exams_results, {:array, :decimal}
   end
 
   def changeset(discipline \\ %__MODULE__{}, params) do
     discipline
     |> cast(params, @required_params)
     |> validate_required(@required_params)
+    |> unique_constraint(:name)
   end
 end
