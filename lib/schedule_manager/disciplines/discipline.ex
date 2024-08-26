@@ -2,18 +2,20 @@ defmodule ScheduleManager.Disciplines.Discipline do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @required_params [:name, :hour, :exams_dates, :credits, :exams_results]
+  @required_params [:name, :hour, :credits]
+  @additional_params [:exams_dates,  :exams_results]
   schema "disciplines" do
-    field :name, :string
-    field :hour, :string
+    field :name, :string, default: ""
+    field :hour, :string, default: ""
     field :exams_dates, {:array, :string}
-    field :credits, :decimal
+    field :credits, :decimal, default: 0
     field :exams_results, {:array, :decimal}
   end
 
-  def changeset(discipline \\ %__MODULE__{}, params) do
+  def changeset(discipline \\ %__MODULE__{}, params\\%{}) do
     discipline
     |> cast(params, @required_params)
+    |> cast(params, @additional_params)
     |> validate_required(@required_params)
     |> unique_constraint(:name)
   end

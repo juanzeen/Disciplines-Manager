@@ -709,27 +709,31 @@ defmodule ScheduleManagerWeb.CoreComponents do
       </div>
 
       <div class="flex justify-around items-center">
-        <div class="flex flex-col text-lime-200">
-          <h3>Exams dates</h3>
-          <ul class="ml-2 text-lime-100">
-            <li :for={date <- @dates}>
-              <%= date %>
-            </li>
-          </ul>
-        </div>
+        <%= if @dates !== [] do %>
+          <div class="flex flex-col text-lime-200">
+            <h3>Exams dates</h3>
+            <ul class="ml-2 text-lime-100">
+              <li :for={date <- @dates}>
+                <%= date %>
+              </li>
+            </ul>
+          </div>
+        <% end %>
 
-        <div class="flex flex-col text-lime-200">
-          <h3>Exams results</h3>
-          <ul class="ml-2 text-lime-100">
-            <li :for={result <- @results}>
-              <%= result %>
-            </li>
-          </ul>
-        </div>
+        <%= if @results !== [] do %>
+          <div class="flex flex-col text-lime-200">
+            <h3>Exams results</h3>
+            <ul class="ml-2 text-lime-100">
+              <li :for={result <- @results}>
+                <%= result %>
+              </li>
+            </ul>
+          </div>
 
-        <span class="text-7xl text-lime-400 flex items-baseline">
-          <%= render_slot(@final_average) %>
-        </span>
+          <span class="text-7xl text-lime-400 flex items-baseline">
+            <%= render_slot(@final_average) %>
+          </span>
+        <% end %>
       </div>
     </div>
     """

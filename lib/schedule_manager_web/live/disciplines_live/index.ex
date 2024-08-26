@@ -1,8 +1,39 @@
 defmodule ScheduleManagerWeb.DisciplinesLive.Index do
+  alias ScheduleManager.Disciplines.Discipline
+  alias ScheduleManager.Disciplines
   use ScheduleManagerWeb, :live_view
 
-  def mount(params, session, socket) do
+  def mount(_params, _session, socket) do
+    form =
+      Discipline.changeset()
+      |> to_form()
+
+    socket = socket
+    |> assign(disciplines: Disciplines.get)
+    |> assign(form: form)
+
     {:ok, socket}
+  end
+
+  def string_to_list(""), do: []
+  def string_to_list(string) do
+  String.split(string)
+  end
+
+  def handle_event("create_discipline", %{"discipline" => discipline_params}, socket) do
+      dates = string_to_list(discipline_params["exams_dates"])
+      results = string_to_list(discipline_params["exams_results"])
+
+      discipline =
+        discipline_params
+        |> Map.put("exams_dates", dates)
+        |> Map.put("exams_results", results)
+
+      Disciplines.create(discipline)
+
+      socket = assign(socket, disciplines: Disciplines.get())
+
+      {:noreply, socket}
   end
 
   def render(assigns) do
@@ -14,13 +45,17 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
       </h3>
     </header>
 
-    <main class="flex flex-col w-full gap-3 items-center">
-      <.discipline_card dates={["01/01", "13/10", "09/08"]} results={["10.0", "9.2", "6.4"]}>
-        <:name>Estrutura de Dados II</:name>
-        <:local_and_hour>105 CCT - Seg, Quar -  10:00</:local_and_hour>
-        <:credits>3</:credits>
-        <:final_average>10</:final_average>
+    <main class="flex flex-col w-9/10 gap-3 items-center justify-around">
+    <div class="flex w-full flex-wrap justify-around items-center gap-6">
+    <%= for discipline <- @disciplines do %>
+      <.discipline_card dates={discipline.exams_dates} results={discipline.exams_results}>
+        <:name> <%= discipline.name %></:name>Z
+        <:local_and_hour> <%= discipline.hour %> </:local_and_hour>
+        <:credits> <%= discipline.credits %> </:credits>
+        <:final_average> <%= 0 %> </:final_average>
       </.discipline_card>
+    <% end %>
+    </div>
 
       <button
         type="submit"
@@ -30,49 +65,59 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
         <.icon name="hero-plus" class="h-6 w-6 text-lime-100" />
       </button>
 
-      <.modal id="create-discipline-modal" class="bg-zinc-100">
-        <form class="flex flex-col gap-4 justify-center items-center">
+      <.modal id="create-discipline-modal">
+        <.form
+        class="flex flex-col gap-4 justify-center items-center"
+        phx-submit="create_discipline"
+        for={@form}>
           <h2 class="text-lime-400 text-xl">Create a discipline!</h2>
 
           <div class="flex justify-around items-around w-full">
             <div class="flex flex-col items-around justify-center gap-2">
-              <input
+              <.input
                 type="text"
                 placeholder="Discipline name"
                 class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400"
+                field={@form[:name]}
               />
-              <input
+              <.input
                 type="text"
                 placeholder="Discipline hour and day"
                 class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400"
+                field={@form[:hour]}
               />
-              <input
+              <.input
                 type="text"
                 placeholder="Discipline credits"
                 class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400"
+                field={@form[:credits]}
               />
             </div>
 
             <div class="h-[100] w-px text-lime-400 bg-lime-400">.</div>
 
             <div class="flex flex-col items-around justify-center gap-4">
-              <input
+              <.input
                 type="text"
                 placeholder="Discipline exams dates"
                 class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400"
+                field={@form[:exams_dates]}
               />
-              <input
+              <.input
                 type="text"
                 placeholder="Discipline exams results"
                 class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400"
+                field={@form[:exams_results]}
               />
             </div>
           </div>
 
-          <.button class="bg-lime-400/60 text-lime-200 hover:bg-lime-400/80 transition-opacity">
+          <.button class="bg-lime-400/60 text-lime-200 hover:bg-lime-400/80 transition-opacity"
+          type="submit"
+          phx-click={hide_modal("create-discipline-modal")}>
             Create!
           </.button>
-        </form>
+        </.form>
       </.modal>
     </main>
     """
