@@ -678,6 +678,12 @@ defmodule ScheduleManagerWeb.CoreComponents do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
   end
 
+    @doc """
+  Card component to put the discipline infos and results. This is the main element of the
+  website, in this component we have a lot of slots and attributes, all of this have the
+  objective to make the heex the most simple and clean as possible.
+  """
+
   attr :class, :string, default: nil
   attr :dates, :list
   attr :results, :list
@@ -691,7 +697,7 @@ defmodule ScheduleManagerWeb.CoreComponents do
 
   def discipline_card(assigns) do
     ~H"""
-    <div class="flex flex-col items-around justify-center rounded-md bg-zinc-800 w-[370px] h-[220px] gap-4 p-3 cursor-pointer">
+    <div class="flex flex-col items-around justify-center rounded-md bg-zinc-800 w-[370px] h-[220px] gap-4 p-3">
       <div class="w-full flex justify-between">
         <div class="flex flex-col items-start">
           <h2 class="text-2xl text-lime-400 font-medium">
@@ -735,6 +741,8 @@ defmodule ScheduleManagerWeb.CoreComponents do
           </span>
         <% end %>
       </div>
+      <%= render_slot(@inner_block) %>
+
     </div>
     """
   end

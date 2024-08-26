@@ -8,38 +8,49 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
       Discipline.changeset()
       |> to_form()
 
-    socket = socket
-    |> assign(disciplines: Disciplines.get)
-    |> assign(form: form)
+    socket =
+      socket
+      |> assign(disciplines: Disciplines.get())
+      |> assign(form: form)
 
     {:ok, socket}
   end
 
   def string_to_list(""), do: []
+
   def string_to_list(string) do
-  String.split(string)
+    String.split(string)
   end
 
   def get_average([]), do: 0
+
   def get_average(results) do
-    Enum.reduce(results, 0, fn x, acc ->  (Decimal.to_float(x) / length(results)) + acc end )
+    Enum.reduce(results, 0, fn x, acc -> Decimal.to_float(x) / length(results) + acc end)
     |> Float.round(1)
   end
 
   def handle_event("create_discipline", %{"discipline" => discipline_params}, socket) do
-      dates = string_to_list(discipline_params["exams_dates"])
-      results = string_to_list(discipline_params["exams_results"])
+    dates = string_to_list(discipline_params["exams_dates"])
+    results = string_to_list(discipline_params["exams_results"])
 
-      discipline =
-        discipline_params
-        |> Map.put("exams_dates", dates)
-        |> Map.put("exams_results", results)
+    discipline =
+      discipline_params
+      |> Map.put("exams_dates", dates)
+      |> Map.put("exams_results", results)
 
-      Disciplines.create(discipline)
+    Disciplines.create(discipline)
 
-      socket = assign(socket, disciplines: Disciplines.get())
+    socket = assign(socket, disciplines: Disciplines.get())
 
-      {:noreply, socket}
+    {:noreply, socket}
+  end
+
+  def handle_event("delete_discipline", %{"discipline_id" => id}, socket) do
+    Disciplines.delete(id)
+
+    socket = assign(socket, disciplines: Disciplines.get())
+
+    {:noreply, socket}
   end
 
   def render(assigns) do
@@ -52,16 +63,33 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
     </header>
 
     <main class="flex flex-col w-9/10 gap-3 items-center justify-around">
-    <div class="flex w-full flex-wrap justify-around items-center gap-6">
-    <%= for discipline <- @disciplines do %>
-      <.discipline_card dates={discipline.exams_dates} results={discipline.exams_results}>
-        <:name> <%= discipline.name %></:name>Z
-        <:local_and_hour> <%= discipline.hour %> </:local_and_hour>
-        <:credits> <%= discipline.credits %> </:credits>
-        <:final_average> <%= get_average(discipline.exams_results) %> </:final_average>
-      </.discipline_card>
-    <% end %>
-    </div>
+      <div class="flex w-full flex-wrap justify-around items-center gap-6">
+        <%= for discipline <- @disciplines do %>
+          <.discipline_card dates={discipline.exams_dates} results={discipline.exams_results}>
+            <:name><%= discipline.name %></:name>
+            <:local_and_hour><%= discipline.hour %></:local_and_hour>
+            <:credits><%= discipline.credits %></:credits>
+            <:final_average><%= get_average(discipline.exams_results) %></:final_average>
+            <div class="flex justify-around items-center w-[150px] mx-auto">
+              <button>
+                <.icon
+                  name="hero-pencil"
+                  class="w-[5] h-[5] bg-lime-500 hover:bg-lime-700 cursor-pointer transition-all"
+                />
+              </button>
+
+              <button
+              phx-click={JS.push("delete_discipline", value: %{discipline_id: discipline.id})}
+              >
+                <.icon
+                  name="hero-x-mark-solid"
+                  class="w-[5] h-[5] bg-lime-500 hover:bg-red-700 cursor-pointer transition-all"
+                />
+              </button>
+            </div>
+          </.discipline_card>
+        <% end %>
+      </div>
 
       <button
         type="submit"
@@ -73,9 +101,10 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
 
       <.modal id="create-discipline-modal">
         <.form
-        class="flex flex-col gap-4 justify-center items-center"
-        phx-submit="create_discipline"
-        for={@form}>
+          class="flex flex-col gap-4 justify-center items-center"
+          phx-submit="create_discipline"
+          for={@form}
+        >
           <h2 class="text-lime-400 text-xl">Create a discipline!</h2>
 
           <div class="flex justify-around items-around w-full">
@@ -118,9 +147,11 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
             </div>
           </div>
 
-          <.button class="bg-lime-400/60 text-lime-200 hover:bg-lime-400/80 transition-opacity"
-          type="submit"
-          phx-click={hide_modal("create-discipline-modal")}>
+          <.button
+            class="bg-lime-400/60 text-lime-200 hover:bg-lime-400/80 transition-opacity"
+            type="submit"
+            phx-click={hide_modal("create-discipline-modal")}
+          >
             Create!
           </.button>
         </.form>
