@@ -20,6 +20,12 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
   String.split(string)
   end
 
+  def get_average([]), do: 0
+  def get_average(results) do
+    Enum.reduce(results, 0, fn x, acc ->  (Decimal.to_float(x) / length(results)) + acc end )
+    |> Float.round(1)
+  end
+
   def handle_event("create_discipline", %{"discipline" => discipline_params}, socket) do
       dates = string_to_list(discipline_params["exams_dates"])
       results = string_to_list(discipline_params["exams_results"])
@@ -52,7 +58,7 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
         <:name> <%= discipline.name %></:name>Z
         <:local_and_hour> <%= discipline.hour %> </:local_and_hour>
         <:credits> <%= discipline.credits %> </:credits>
-        <:final_average> <%= 0 %> </:final_average>
+        <:final_average> <%= get_average(discipline.exams_results) %> </:final_average>
       </.discipline_card>
     <% end %>
     </div>
