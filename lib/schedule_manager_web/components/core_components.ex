@@ -697,7 +697,7 @@ defmodule ScheduleManagerWeb.CoreComponents do
 
   def discipline_card(assigns) do
     ~H"""
-    <div class="flex flex-col items-around justify-center rounded-md bg-zinc-800 w-[370px] h-[220px] gap-4 p-3">
+    <div class="flex flex-col items-around justify-center rounded-md bg-zinc-800 w-[370px] h-[240px] gap-4 px-3 py-5">
       <div class="w-full flex justify-between">
         <div class="flex flex-col items-start">
           <h2 class="text-2xl text-lime-400 font-medium">

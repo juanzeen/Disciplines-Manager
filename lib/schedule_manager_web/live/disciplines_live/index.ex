@@ -74,7 +74,7 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
               <button>
                 <.icon
                   name="hero-pencil"
-                  class="w-[5] h-[5] bg-lime-500 hover:bg-lime-700 cursor-pointer transition-all"
+                  class="w-[22px] h-[22px] bg-zinc-700/50 hover:bg-lime-600 cursor-pointer transition-all"
                 />
               </button>
 
@@ -83,7 +83,7 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
               >
                 <.icon
                   name="hero-x-mark-solid"
-                  class="w-[5] h-[5] bg-lime-500 hover:bg-red-700 cursor-pointer transition-all"
+                  class="w-[22px] h-[22px] bg-zinc-700/50 hover:bg-red-700 cursor-pointer transition-all"
                 />
               </button>
             </div>
@@ -129,7 +129,7 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
               />
             </div>
 
-            <div class="h-[100] w-px text-lime-400 bg-lime-400">.</div>
+            <div class="h-[100] w-px text-lime-400 bg-lime-400"></div>
 
             <div class="flex flex-col items-around justify-center gap-4">
               <.input
