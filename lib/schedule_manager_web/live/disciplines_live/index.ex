@@ -1,4 +1,5 @@
 defmodule ScheduleManagerWeb.DisciplinesLive.Index do
+  require Decimal
   alias ScheduleManager.Disciplines.Discipline
   alias ScheduleManager.Disciplines
   use ScheduleManagerWeb, :live_view
@@ -27,6 +28,17 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
   def get_average(results) do
     Enum.reduce(results, 0, fn x, acc -> Decimal.to_float(x) / length(results) + acc end)
     |> Float.round(1)
+  end
+
+  def get_texts_from_list(list, acc \\ "")
+  def get_texts_from_list([], acc), do: acc
+
+  def get_texts_from_list([h | t], acc) do
+    cond do
+      is_binary(h) -> get_texts_from_list(t, acc <> h <> " ")
+      Decimal.is_decimal(h) -> get_texts_from_list(t, acc <> Decimal.to_string(h) <> " ")
+      true -> nil
+    end
   end
 
   def handle_event("create_discipline", %{"discipline" => discipline_params}, socket) do
@@ -71,16 +83,14 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
             <:credits><%= discipline.credits %></:credits>
             <:final_average><%= get_average(discipline.exams_results) %></:final_average>
             <div class="flex justify-around items-center w-[150px] mx-auto">
-              <button>
+              <button phx-click={show_modal("update-discipline-modal")}>
                 <.icon
                   name="hero-pencil"
                   class="w-[22px] h-[22px] bg-zinc-700/50 hover:bg-lime-600 cursor-pointer transition-all"
                 />
               </button>
 
-              <button
-              phx-click={JS.push("delete_discipline", value: %{discipline_id: discipline.id})}
-              >
+              <button phx-click={JS.push("delete_discipline", value: %{discipline_id: discipline.id})}>
                 <.icon
                   name="hero-x-mark-solid"
                   class="w-[22px] h-[22px] bg-zinc-700/50 hover:bg-red-700 cursor-pointer transition-all"
@@ -88,6 +98,64 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
               </button>
             </div>
           </.discipline_card>
+          <.modal id="update-discipline-modal">
+            <.form class="flex flex-col gap-4 justify-center items-center" phx-submit="" for={@form}>
+              <h2 class="text-lime-400 text-xl">Update a discipline!</h2>
+
+              <div class="flex justify-around items-around w-full">
+                <div class="flex flex-col items-around justify-center gap-2">
+                  <.input
+                    type="text"
+                    placeholder="Discipline name"
+                    class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400"
+                    field={@form[:name]}
+                    value={discipline.name}
+                  />
+                  <.input
+                    type="text"
+                    placeholder="Discipline hour and day"
+                    class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400"
+                    field={@form[:hour]}
+                    value={discipline.hour}
+                  />
+                  <.input
+                    type="text"
+                    placeholder="Discipline credits"
+                    class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400"
+                    field={@form[:credits]}
+                    value={discipline.credits}
+                  />
+                </div>
+
+                <div class="h-[100] w-px text-lime-400 bg-lime-400"></div>
+
+                <div class="flex flex-col items-around justify-center gap-4">
+                  <.input
+                    type="text"
+                    placeholder="Discipline exams dates"
+                    class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400"
+                    field={@form[:exams_dates]}
+                    value={get_texts_from_list(discipline.exams_dates)}
+                  />
+                  <.input
+                    type="text"
+                    placeholder="Discipline exams results"
+                    class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400"
+                    field={@form[:exams_results]}
+                    value={get_texts_from_list(discipline.exams_results)}
+                  />
+                </div>
+              </div>
+
+              <.button
+                class="bg-lime-400/60 text-lime-200 hover:bg-lime-400/80 transition-opacity"
+                type="submit"
+                phx-click={hide_modal("create-discipline-modal")}
+              >
+                Update!
+              </.button>
+            </.form>
+          </.modal>
         <% end %>
       </div>
 

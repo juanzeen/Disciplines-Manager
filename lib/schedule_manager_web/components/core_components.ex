@@ -678,7 +678,7 @@ defmodule ScheduleManagerWeb.CoreComponents do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
   end
 
-    @doc """
+  @doc """
   Card component to put the discipline infos and results. This is the main element of the
   website, in this component we have a lot of slots and attributes, all of this have the
   objective to make the heex the most simple and clean as possible.
@@ -742,7 +742,6 @@ defmodule ScheduleManagerWeb.CoreComponents do
         <% end %>
       </div>
       <%= render_slot(@inner_block) %>
-
     </div>
     """
   end

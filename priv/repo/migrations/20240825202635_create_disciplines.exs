@@ -9,7 +9,7 @@ defmodule ScheduleManager.Repo.Migrations.CreateDisciplines do
       add :exams_results, {:array, :decimal}
       add :credits, :decimal, null: false
     end
+
     create unique_index(:disciplines, :name)
   end
-
 end

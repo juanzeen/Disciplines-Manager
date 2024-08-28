@@ -3,7 +3,7 @@ defmodule ScheduleManager.Disciplines.Discipline do
   import Ecto.Changeset
 
   @required_params [:name, :hour, :credits]
-  @additional_params [:exams_dates,  :exams_results]
+  @additional_params [:exams_dates, :exams_results]
   schema "disciplines" do
     field :name, :string, default: ""
     field :hour, :string, default: ""
@@ -12,7 +12,7 @@ defmodule ScheduleManager.Disciplines.Discipline do
     field :exams_results, {:array, :decimal}
   end
 
-  def changeset(discipline \\ %__MODULE__{}, params\\%{}) do
+  def changeset(discipline \\ %__MODULE__{}, params \\ %{}) do
     discipline
     |> cast(params, @required_params)
     |> cast(params, @additional_params)

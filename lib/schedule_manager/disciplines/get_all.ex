@@ -4,5 +4,4 @@ defmodule ScheduleManager.Disciplines.GetAll do
   def call() do
     ScheduleManager.Repo.all(Discipline)
   end
-
 end
