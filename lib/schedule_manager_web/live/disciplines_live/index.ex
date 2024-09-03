@@ -11,8 +11,9 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
 
     socket =
       socket
-      |> assign(disciplines: Disciplines.get())
+      |> assign(disciplines: Disciplines.get_all())
       |> assign(form: form)
+      |> assign(current_discipline: %Discipline{})
 
     {:ok, socket}
   end
@@ -31,7 +32,9 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
   end
 
   def get_texts_from_list(list, acc \\ "")
+
   def get_texts_from_list([], acc), do: acc
+  def get_texts_from_list(nil, acc), do: acc
 
   def get_texts_from_list([h | t], acc) do
     cond do
@@ -52,7 +55,7 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
 
     Disciplines.create(discipline)
 
-    socket = assign(socket, disciplines: Disciplines.get())
+    socket = assign(socket, disciplines: Disciplines.get_all())
 
     {:noreply, socket}
   end
@@ -60,7 +63,14 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
   def handle_event("delete_discipline", %{"discipline_id" => id}, socket) do
     Disciplines.delete(id)
 
-    socket = assign(socket, disciplines: Disciplines.get())
+    socket = assign(socket, disciplines: Disciplines.get_all())
+
+    {:noreply, socket}
+  end
+
+  def handle_event("edit_discipline", %{"discipline_id" => id}, socket) do
+    socket = socket |> assign(current_discipline: Disciplines.get_discipline(id))
+    IO.inspect(socket.assigns.current_discipline)
 
     {:noreply, socket}
   end
@@ -83,7 +93,8 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
             <:credits><%= discipline.credits %></:credits>
             <:final_average><%= get_average(discipline.exams_results) %></:final_average>
             <div class="flex justify-around items-center w-[150px] mx-auto">
-              <button phx-click={show_modal("update-discipline-modal")}>
+              <button
+              phx-click={JS.push("edit_discipline", value: %{discipline_id: discipline.id})}>
                 <.icon
                   name="hero-pencil"
                   class="w-[22px] h-[22px] bg-zinc-700/50 hover:bg-lime-600 cursor-pointer transition-all"
@@ -98,7 +109,7 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
               </button>
             </div>
           </.discipline_card>
-          <.modal id="update-discipline-modal">
+          <.modal id="edit-discipline-modal">
             <.form class="flex flex-col gap-4 justify-center items-center" phx-submit="" for={@form}>
               <h2 class="text-lime-400 text-xl">Update a discipline!</h2>
 
@@ -109,21 +120,21 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
                     placeholder="Discipline name"
                     class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400"
                     field={@form[:name]}
-                    value={discipline.name}
+                    value={@current_discipline.name}
                   />
                   <.input
                     type="text"
                     placeholder="Discipline hour and day"
                     class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400"
                     field={@form[:hour]}
-                    value={discipline.hour}
+                    value={@current_discipline.hour}
                   />
                   <.input
                     type="text"
                     placeholder="Discipline credits"
                     class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400"
                     field={@form[:credits]}
-                    value={discipline.credits}
+                    value={@current_discipline.credits}
                   />
                 </div>
 
@@ -135,14 +146,14 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
                     placeholder="Discipline exams dates"
                     class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400"
                     field={@form[:exams_dates]}
-                    value={get_texts_from_list(discipline.exams_dates)}
+                    value={get_texts_from_list(@current_discipline.exams_dates)}
                   />
                   <.input
                     type="text"
                     placeholder="Discipline exams results"
                     class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400"
                     field={@form[:exams_results]}
-                    value={get_texts_from_list(discipline.exams_results)}
+                    value={get_texts_from_list(@current_discipline.exams_results)}
                   />
                 </div>
               </div>
@@ -150,7 +161,7 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
               <.button
                 class="bg-lime-400/60 text-lime-200 hover:bg-lime-400/80 transition-opacity"
                 type="submit"
-                phx-click={hide_modal("create-discipline-modal")}
+                phx-click={hide_modal("edit-discipline-modal")}
               >
                 Update!
               </.button>
