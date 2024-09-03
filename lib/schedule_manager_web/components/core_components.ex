@@ -638,6 +638,18 @@ defmodule ScheduleManagerWeb.CoreComponents do
     |> JS.focus_first(to: "##{id}-content")
   end
 
+  def show_modal_no_focus(js \\ %JS{}, id) when is_binary(id) do
+    js
+    |> JS.show(to: "##{id}")
+    |> JS.show(
+      to: "##{id}-bg",
+      time: 300,
+      transition: {"transition-all transform ease-out duration-300", "opacity-0", "opacity-100"}
+    )
+    |> show("##{id}-container")
+    |> JS.add_class("overflow-hidden", to: "body")
+  end
+
   def hide_modal(js \\ %JS{}, id) do
     js
     |> JS.hide(

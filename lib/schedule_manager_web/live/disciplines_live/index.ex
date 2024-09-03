@@ -94,7 +94,9 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
             <:final_average><%= get_average(discipline.exams_results) %></:final_average>
             <div class="flex justify-around items-center w-[150px] mx-auto">
               <button
-              phx-click={JS.push("edit_discipline", value: %{discipline_id: discipline.id})}>
+                phx-click={JS.push("edit_discipline", value: %{discipline_id: discipline.id})}
+                phx-click-away={show_modal_no_focus("edit-discipline-modal")}
+              >
                 <.icon
                   name="hero-pencil"
                   class="w-[22px] h-[22px] bg-zinc-700/50 hover:bg-lime-600 cursor-pointer transition-all"
