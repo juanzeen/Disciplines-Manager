@@ -68,13 +68,6 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
     {:noreply, socket}
   end
 
-  def handle_event("edit_discipline", %{"discipline_id" => id}, socket) do
-    socket = socket |> assign(current_discipline: Disciplines.get_discipline(id))
-    IO.inspect(socket.assigns.current_discipline)
-
-    {:noreply, socket}
-  end
-
   def render(assigns) do
     ~H"""
     <header class="flex flex-col gap-1 mb-10 mx-auto text-center">
@@ -94,8 +87,8 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
             <:final_average><%= get_average(discipline.exams_results) %></:final_average>
             <div class="flex justify-around items-center w-[150px] mx-auto">
               <button
+                type="submit"
                 phx-click={JS.push("edit_discipline", value: %{discipline_id: discipline.id})}
-                phx-click-away={show_modal_no_focus("edit-discipline-modal")}
               >
                 <.icon
                   name="hero-pencil"
@@ -111,64 +104,6 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
               </button>
             </div>
           </.discipline_card>
-          <.modal id="edit-discipline-modal">
-            <.form class="flex flex-col gap-4 justify-center items-center" phx-submit="" for={@form}>
-              <h2 class="text-lime-400 text-xl">Update a discipline!</h2>
-
-              <div class="flex justify-around items-around w-full">
-                <div class="flex flex-col items-around justify-center gap-2">
-                  <.input
-                    type="text"
-                    placeholder="Discipline name"
-                    class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400"
-                    field={@form[:name]}
-                    value={@current_discipline.name}
-                  />
-                  <.input
-                    type="text"
-                    placeholder="Discipline hour and day"
-                    class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400"
-                    field={@form[:hour]}
-                    value={@current_discipline.hour}
-                  />
-                  <.input
-                    type="text"
-                    placeholder="Discipline credits"
-                    class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400"
-                    field={@form[:credits]}
-                    value={@current_discipline.credits}
-                  />
-                </div>
-
-                <div class="h-[100] w-px text-lime-400 bg-lime-400"></div>
-
-                <div class="flex flex-col items-around justify-center gap-4">
-                  <.input
-                    type="text"
-                    placeholder="Discipline exams dates"
-                    class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400"
-                    field={@form[:exams_dates]}
-                    value={get_texts_from_list(@current_discipline.exams_dates)}
-                  />
-                  <.input
-                    type="text"
-                    placeholder="Discipline exams results"
-                    class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400"
-                    field={@form[:exams_results]}
-                    value={get_texts_from_list(@current_discipline.exams_results)}
-                  />
-                </div>
-              </div>
-
-              <.button
-                class="bg-lime-400/60 text-lime-200 hover:bg-lime-400/80 transition-opacity"
-                type="submit"
-                phx-click={hide_modal("edit-discipline-modal")}
-              >
-                Update!
-              </.button>
-            </.form>
-          </.modal>
         <% end %>
       </div>
 
@@ -182,7 +117,8 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
 
       <.modal id="create-discipline-modal">
         <.form
-          class="flex flex-col gap-4 justify-center items-center"
+          class="flex flex-col gap-4 justif
+          y-center items-center"
           phx-submit="create_discipline"
           for={@form}
         >

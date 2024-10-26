@@ -235,7 +235,7 @@ defmodule ScheduleManagerWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
+        "phx-submit-loading:opacity-75 rounded-lg py-2 px-3",
         "text-sm font-semibold leading-6 text-white active:text-white/80",
         @class
       ]}
@@ -594,10 +594,11 @@ defmodule ScheduleManagerWeb.CoreComponents do
   """
   attr :name, :string, required: true
   attr :class, :string, default: nil
+  attr :rest, :global, include: ~w(disabled name valuen phx-click)
 
   def icon(%{name: "hero-" <> _} = assigns) do
     ~H"""
-    <span class={[@name, @class]} />
+    <span class={[@name, @class]} {@rest} />
     """
   end
 
@@ -709,7 +710,10 @@ defmodule ScheduleManagerWeb.CoreComponents do
 
   def discipline_card(assigns) do
     ~H"""
-    <div class="flex flex-col items-around justify-center rounded-md bg-zinc-800 w-[370px] h-[240px] gap-4 px-3 py-5">
+    <div
+      class="flex flex-col items-around justify-center rounded-md bg-zinc-800 w-[370px] h-[240px] gap-4 px-3 py-5"
+      phx-mounted={JS.transition("fade-out-scale", time: 500)}
+    >
       <div class="w-full flex justify-between">
         <div class="flex flex-col items-start">
           <h2 class="text-2xl text-lime-400 font-medium">

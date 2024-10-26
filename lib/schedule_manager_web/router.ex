@@ -1,4 +1,6 @@
 defmodule ScheduleManagerWeb.Router do
+  alias DisciplineLive.Index
+  alias DisciplinesLive.Update
   use ScheduleManagerWeb, :router
 
   pipeline :browser do
@@ -18,6 +20,7 @@ defmodule ScheduleManagerWeb.Router do
     pipe_through :browser
 
     live "/", DisciplinesLive.Index, :index
+    live "/update/:id", Update, :get
   end
 
   # Other scopes may use custom stacks.
