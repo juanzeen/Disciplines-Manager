@@ -2,8 +2,8 @@ defmodule ScheduleManager.Disciplines.Discipline do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @required_params [:name, :hour, :credits]
-  @additional_params [:exams_dates, :exams_results]
+  @required_params [:name, :credits]
+  @additional_params [:hour, :exams_dates, :exams_results]
   schema "disciplines" do
     field :name, :string, default: ""
     field :hour, :string, default: ""
