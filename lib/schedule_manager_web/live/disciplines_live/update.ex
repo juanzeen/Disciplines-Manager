@@ -25,10 +25,14 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Update do
       params
       |> Map.put("exams_dates", new_dates)
       |> Map.put("exams_results", new_results)
+      |> Map.put("id", socket.assigns.current_discipline.id)
+      |> IO.inspect()
 
-      #Disciplines.update(@current_discipline, edited_discipline)
 
-    {:noreply, socket}
+      Disciplines.update(socket.assigns.current_discipline, edited_discipline)
+
+
+    {:noreply, push_navigate(socket, to: "/")}
   end
 
   def render(assigns) do
