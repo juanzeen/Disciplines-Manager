@@ -28,23 +28,23 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Update do
       |> Map.put("id", socket.assigns.current_discipline.id)
       |> IO.inspect()
 
+    Disciplines.update(socket.assigns.current_discipline, edited_discipline)
 
-      Disciplines.update(socket.assigns.current_discipline, edited_discipline)
-
+    put_flash(socket, :info, "Updated with success!")
 
     {:noreply, push_navigate(socket, to: "/")}
   end
 
   def render(assigns) do
     ~H"""
-    <div class="w-7/12 max-w-[1200px] h-[300px] bg-zinc-800 rounded-lg">
+    <div class="w-7/12 max-w-[1200px] h-[300px] bg-zinc-800 rounded-lg md:max-lg:w-11/12">
       <.form
         class="flex flex-col gap-4 justify-center items-center py-5 px-2"
         phx-submit="edit_discipline"
         for={@form}
       >
-        <h2 class="text-lime-400 text-xl">
-          Edit the <strong><%= @current_discipline.name %></strong> discipline!
+        <h2 class="text-lime-300 text-xl">
+          Edit the <strong class="text-lime-400"><%= @current_discipline.name %></strong> discipline!
         </h2>
 
         <div class="flex justify-around items-around w-full">
@@ -72,7 +72,7 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Update do
             />
           </div>
 
-          <div class="h-[100] w-px text-lime-400 bg-lime-400"></div>
+          <div class="h-[100] w-px bg-zinc-100"></div>
 
           <div class="flex flex-col items-around justify-center gap-4">
             <.input
@@ -88,7 +88,6 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Update do
               class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400"
               field={@form[:exams_results]}
               value={Index.get_texts_from_list(@current_discipline.exams_results)}
-
             />
           </div>
         </div>
@@ -102,6 +101,10 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Update do
         </.button>
       </.form>
     </div>
+
+    <.back navigate={~p"/"}>
+      Go back to the list of disciplines
+    </.back>
     """
   end
 end

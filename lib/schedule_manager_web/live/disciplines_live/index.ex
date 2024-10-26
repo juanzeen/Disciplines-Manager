@@ -86,14 +86,13 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
             <:credits><%= discipline.credits %></:credits>
             <:final_average><%= get_average(discipline.exams_results) %></:final_average>
             <div class="flex justify-around items-center w-[150px] mx-auto">
-              <button
-                type="submit"
-                phx-click={JS.push("edit_discipline", value: %{discipline_id: discipline.id})}
-              >
-                <.icon
-                  name="hero-pencil"
-                  class="w-[22px] h-[22px] bg-zinc-700/50 hover:bg-lime-600 cursor-pointer transition-all"
-                />
+              <button type="submit">
+                <a href={"/update/#{discipline.id}"}>
+                  <.icon
+                    name="hero-pencil"
+                    class="w-[22px] h-[22px] bg-zinc-700/50 hover:bg-lime-600 cursor-pointer transition-all"
+                  />
+                </a>
               </button>
 
               <button phx-click={JS.push("delete_discipline", value: %{discipline_id: discipline.id})}>
@@ -146,7 +145,7 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
               />
             </div>
 
-            <div class="h-[100] w-px text-lime-400 bg-lime-400"></div>
+            <div class="h-[100] w-px bg-zinc-100"></div>
 
             <div class="flex flex-col items-around justify-center gap-4">
               <.input

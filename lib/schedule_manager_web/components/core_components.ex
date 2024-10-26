@@ -76,10 +76,10 @@ defmodule ScheduleManagerWeb.CoreComponents do
                 <button
                   phx-click={JS.exec("data-cancel", to: "##{@id}")}
                   type="button"
-                  class="-m-3 flex-none p-3 opacity-50 hover:opacity-100"
+                  class="-m-3 flex-none p-3 opacity-100"
                   aria-label={gettext("close")}
                 >
-                  <.icon name="hero-x-mark-solid" class="h-5 w-5 text-lime-400" />
+                  <.icon name="hero-x-mark-solid" class="h-5 w-5 text-zinc-800 hover:text-red-800" />
                 </button>
               </div>
               <div id={"#{@id}-content"}>
@@ -381,7 +381,7 @@ defmodule ScheduleManagerWeb.CoreComponents do
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
+          "mt-2 block w-full rounded-lg text-zinc-100 bg-transparent focus:ring-0 sm:text-sm sm:leading-6",
           @errors == [] && "border-zinc-300 focus:border-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
@@ -565,7 +565,7 @@ defmodule ScheduleManagerWeb.CoreComponents do
     <div class="mt-16">
       <.link
         navigate={@navigate}
-        class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+        class="text-sm font-semibold leading-6 text-lime-200 hover:text-lime-300"
       >
         <.icon name="hero-arrow-left-solid" class="h-3 w-3" />
         <%= render_slot(@inner_block) %>
