@@ -9,11 +9,14 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
       Discipline.changeset()
       |> to_form()
 
+      to_delete_confirm =  %{discipline_name: nil} |> to_form()
+
     socket =
       socket
       |> assign(disciplines: Disciplines.get_all())
       |> assign(form: form)
-      |> assign(current_discipline: %Discipline{})
+      |> assign(to_delete_discipline: %Discipline{})
+      |> assign(to_delete_confirm: to_delete_confirm)
 
     {:ok, socket}
   end
@@ -32,7 +35,6 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
   end
 
   def get_texts_from_list(list, acc \\ "")
-
   def get_texts_from_list([], acc), do: acc
   def get_texts_from_list(nil, acc), do: acc
 
@@ -60,12 +62,20 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
     {:noreply, socket}
   end
 
-  def handle_event("delete_discipline", %{"discipline_id" => id}, socket) do
-    Disciplines.delete(id)
-
-    socket = assign(socket, disciplines: Disciplines.get_all())
-
+  def handle_event("get_discipline_to_delete", %{"discipline_name" => name}, socket) do
+    socket = assign(socket, to_delete_discipline: Disciplines.get_discipline_by_name(name))
     {:noreply, socket}
+  end
+
+  def handle_event("delete_discipline", %{"delete-discipline-name-input" => delete_input}, socket) do
+    if(delete_input === socket.assigns.to_delete_discipline.name) do
+      Disciplines.delete(socket.assigns.to_delete_discipline.id)
+    end
+
+    socket = socket
+    |> assign(disciplines: Disciplines.get_all())
+
+   {:noreply, socket}
   end
 
   def render(assigns) do
@@ -77,7 +87,7 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
       </h3>
     </header>
 
-    <main class="flex flex-col w-9/10 gap-3 items-center justify-around">
+    <main class="flex flex-col w-9/10 gap-3 items-center justify-around relative">
       <div class="flex w-full flex-wrap justify-around items-center gap-6">
         <%= for discipline <- @disciplines do %>
           <.discipline_card dates={discipline.exams_dates} results={discipline.exams_results}>
@@ -95,8 +105,13 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
                 </a>
               </button>
 
-              <button phx-click={JS.push("delete_discipline", value: %{discipline_id: discipline.id})}>
+              <button class="open-delete-modal">
                 <.icon
+                  phx-click={
+                    JS.push("get_discipline_to_delete",
+                      value: %{"discipline_name" => discipline.name}
+                    )
+                  }
                   name="hero-x-mark-solid"
                   class="w-[22px] h-[22px] bg-zinc-700/50 hover:bg-red-700 cursor-pointer transition-all"
                 />
@@ -107,7 +122,6 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
       </div>
 
       <button
-        type="submit"
         class="bg-lime-400 rounded-full w-[50px] h-[50px] hover:bg-lime-500"
         phx-click={show_modal("create-discipline-modal")}
       >
@@ -172,6 +186,46 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Index do
           </.button>
         </.form>
       </.modal>
+
+      <div
+        id="delete-modal"
+        class="w-[360px] h-[220px] bg-zinc-800 rounded-lg md:max-lg:w-11/12 flex flex-col items-center justify-evenly absolute transition-opacity bottom-50 left-50 z-10 bg-color-700/50 hidden"
+      >
+      <div class="w-3/4 flex justify-between">
+        <h2 class="text-zinc-200 text-md">
+          Remove <strong class="text-red-500"><%= @to_delete_discipline.name %></strong> ?
+        </h2>
+        <.icon
+          id="hide-delete-modal"
+          name="hero-x-mark-solid"
+          class="w-[22px] h-[22px] bg-zinc-700/50 hover:bg-red-700 cursor-pointer transition-all"
+        />
+      </div>
+        <.form
+        class="flex flex-col items-center justify-around h-1/2"
+        for={@to_delete_confirm}
+        phx-submit="delete_discipline"
+        >
+          <div class="flex justify-around items-around w-full">
+            <div class="flex flex-col items-around justify-center gap-2">
+              <.input
+                name="delete-discipline-name-input"
+                placeholder={@to_delete_discipline.name}
+                class="bg-transparent text-lime-200 rounded-md placeholder-green-100 border-lime-400 placeholder:text-zinc-100/50"
+                field={@to_delete_confirm[:discipline_name]}
+              />
+            </div>
+          </div>
+
+          <.button
+            class="bg-transparent text-red-400 hover:text-red-500 transition-opacity py-1 px-4"
+
+            phx-submit={hide_modal("delete-modal")}
+          >
+            REMOVE
+          </.button>
+        </.form>
+      </div>
     </main>
     """
   end

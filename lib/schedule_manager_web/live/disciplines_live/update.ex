@@ -26,19 +26,18 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Update do
       |> Map.put("exams_dates", new_dates)
       |> Map.put("exams_results", new_results)
       |> Map.put("id", socket.assigns.current_discipline.id)
-      |> IO.inspect()
 
     Disciplines.update(socket.assigns.current_discipline, edited_discipline)
 
     put_flash(socket, :info, "Updated with success!")
 
-    {:noreply, push_navigate(socket, to: "/")}
+    {:noreply, push_navigate(socket, to: ~p"/")}
   end
 
   def render(assigns) do
     ~H"""
     <div class="w-7/12 max-w-[1200px] h-[300px] bg-zinc-800 rounded-lg md:max-lg:w-11/12">
-      <.form
+      <.simple_form
         class="flex flex-col gap-4 justify-center items-center py-5 px-2"
         phx-submit="edit_discipline"
         for={@form}
@@ -94,12 +93,10 @@ defmodule ScheduleManagerWeb.DisciplinesLive.Update do
 
         <.button
           class="bg-lime-400/60 text-lime-200 hover:bg-lime-400/80 transition-opacity py-1 px-4"
-          type="submit"
-          phx-click={hide_modal("create-discipline-modal")}
         >
           Edit!
         </.button>
-      </.form>
+      </.simple_form>
     </div>
 
     <.back navigate={~p"/"}>

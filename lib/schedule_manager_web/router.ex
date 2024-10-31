@@ -1,5 +1,4 @@
 defmodule ScheduleManagerWeb.Router do
-  alias DisciplineLive.Index
   alias DisciplinesLive.Update
   use ScheduleManagerWeb, :router
 

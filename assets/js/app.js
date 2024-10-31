@@ -34,6 +34,15 @@ topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
 window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
 window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 
+
+document.querySelectorAll('.open-delete-modal').forEach(el => {
+  el.addEventListener("click", (e) => {
+    document.querySelector("#delete-modal").classList.remove("hidden")
+  })
+});
+
+document.querySelector("#hide-delete-modal").addEventListener("click", () => document.querySelector("#delete-modal").classList.add("hidden"))
+
 // connect if there are any LiveViews on the page
 liveSocket.connect()
 

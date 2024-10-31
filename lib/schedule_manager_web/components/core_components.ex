@@ -711,7 +711,7 @@ defmodule ScheduleManagerWeb.CoreComponents do
   def discipline_card(assigns) do
     ~H"""
     <div
-      class="flex flex-col items-around justify-center rounded-md bg-zinc-800 w-[370px] h-[240px] gap-4 px-3 py-5"
+      class="flex flex-col items-around justify-center rounded-md bg-zinc-800 w-[370px] h-[240px] gap-4 px-3 py-5 hover:scale-105 transition-transform cursor-pointer"
       phx-mounted={JS.transition("fade-out-scale", time: 500)}
     >
       <div class="w-full flex justify-between">
